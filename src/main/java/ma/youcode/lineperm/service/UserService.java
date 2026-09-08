@@ -24,7 +24,8 @@ public class UserService {
         try {
             List<String> lines = Files.readAllLines(filePath);
             for (String line : lines) {
-                if (line.trim().isEmpty()) continue;
+                if (line.trim().isEmpty())
+                    continue;
                 String[] parts = line.split(":", 2);
                 if (parts.length == 2) {
                     User user = new User(parts[0], parts[1]);
@@ -52,5 +53,29 @@ public class UserService {
         return true;
     }
 
-    
+    public User connecter(String login, String motDePasse) {
+        User user = comptes.get(login);
+        if (user == null) {
+            return null;
+        }
+        if (BCrypt.checkpw(motDePasse, user.getPasswordHash())) {
+            return user;
+        }
+        return null;
+    }
+
+    public void sauvegarder() {
+        try {
+            if (filePath.getParent() != null && !Files.exists(filePath.getParent())) {
+                Files.createDirectories(filePath.getParent());
+            }
+            List<String> lines = new ArrayList<>();
+            for (User user : comptes.values()) {
+                lines.add(user.getLogin() + ":" + user.getPasswordHash());
+            }
+            Files.write(filePath, lines);
+        } catch (IOException e) {
+            System.err.println("Erreur de sauvegarde: " + e.getMessage());
+        }
+    }
 }
