@@ -48,4 +48,26 @@ public class ConsoleApp {
         }
     }
 
+    public void signup() {
+        String login = lireLigne("Login ").trim();
+        if (login.isEmpty() || login.contains(" ") || login.contains(":")) {
+            System.out.println("Login invalide");
+            return;
+        }
+
+        if (userService.existe(login)) {
+            System.out.println("Ce utilisateur existe deja");
+            return;
+        }
+
+        String mdp = lireLigne("Mot de passe: ");
+        if (mdp.trim().isEmpty()) {
+            System.out.println("Le mot de passe ne peut pas etre vide");
+            return;
+        }
+
+        if (userService.creerCompte(login, mdp)) {
+            System.out.println("Compte cree avec succes");
+        }
+    }
 }
