@@ -104,9 +104,26 @@ public class ConsoleApp {
             case "login":
                 login();
                 break;
+            case "logout":
+                logout();
+                break;
+
+            case "exit":
+                exit();
+                break;
             default:
                 System.out.println("Commande inconnue : " + commande);
                 break;
         }
+    }
+
+    private void logout() {
+        utilisateurConnecte = null;
+        System.out.println("Deconnecte");
+    }
+
+    private void exit() {
+        System.out.println("Au revoir");
+        actif = false;
     }
 }
