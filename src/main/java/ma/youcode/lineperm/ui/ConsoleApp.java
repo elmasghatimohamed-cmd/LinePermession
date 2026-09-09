@@ -23,6 +23,8 @@ public class ConsoleApp {
 
         System.out.println("LinPermission - gestion de fichiers");
         System.out.println("Non connecte. Commandes signup, login, exit");
+
+        prompt();
     }
 
     private String lireLigne(String message) {
@@ -69,5 +71,12 @@ public class ConsoleApp {
         if (userService.creerCompte(login, mdp)) {
             System.out.println("Compte cree avec succes");
         }
+    }
+
+    private String prompt() {
+        if (utilisateurConnecte != null) {
+            return utilisateurConnecte.getLogin() + "@linperm> ";
+        }
+        return "linperm> ";
     }
 }
