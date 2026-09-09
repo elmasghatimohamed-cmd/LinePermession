@@ -28,7 +28,7 @@ public class Main {
         // }
         ConsoleApp console = new ConsoleApp();
         console.demarrer();
-        // console.login();
+        console.login();
         console.signup();
     }
 }
