@@ -92,6 +92,10 @@ public class ConsoleApp {
         String[] mots = nettoyee.split("\\s+");
         String commande = mots[0].toLowerCase();
 
+        if (utilisateurConnecte == null && requisConnexion(commande)) {
+            System.out.println("Utilisateur doit etre connecte");
+            return;
+        }
 
         if (utilisateurConnecte != null && (commande.equals("signup") || commande.equals("login"))) {
             System.out.println("Vous etes deja connecte");
@@ -125,5 +129,9 @@ public class ConsoleApp {
     private void exit() {
         System.out.println("Au revoir");
         actif = false;
+    }
+
+    private boolean requisConnexion(String commande) {
+        return commande.equals("logout");
     }
 }
