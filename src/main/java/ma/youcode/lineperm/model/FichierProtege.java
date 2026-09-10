@@ -73,7 +73,7 @@ public class FichierProtege {
         return (otherR ? "r" : "-") + (otherW ? "w" : "-") + (otherD ? "d" : "-");
     }
 
-    public String versLigne() {
-        return nom + ";" + proprietaire + ";" + getBlocProprietaire() + ";" + getBlocAutres();
+    public String getDroitsFormates() {
+        return getBlocProprietaire() + "|" + getBlocAutres();
     }
 }
