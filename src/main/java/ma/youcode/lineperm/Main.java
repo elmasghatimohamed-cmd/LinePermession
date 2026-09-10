@@ -11,18 +11,35 @@ public class Main {
         // app.demarrer();
 
         FileService fileService = new FileService();
-        User user = new User("Badr", "123456");
-        boolean resultat = fileService.creerFichier(user, "test.txt");
-        if (resultat) {
-            System.out.println("Fichier cree avec succes.");
-        } else {
-            System.out.println("Echec de creation du fichier.");
+
+        User user = new User("Mohamed", "123456");
+
+        System.out.println("\n========== AVANT CREATION ==========");
+        for (FichierProtege fichier : fileService.listerTous()) {
+            System.out.println(fichier.getNom());
         }
 
+        System.out.println("\n========== CREATION ==========");
+
+        boolean resultat = fileService.creerFichier(user, "instant.txt");
+
+        System.out.println(
+                resultat
+                        ? "Nouveau fichier cree avec succes."
+                        : "Echec de creation.");
+
+        System.out.println("\n========== APRES CREATION ==========");
+
         for (FichierProtege fichier : fileService.listerTous()) {
-            System.out.println(fichier.getNom() + " | Proprietaire: " + fichier.getProprietaire() + " | Droits: "
-                    + fichier.getBlocProprietaire() + "|" + fichier.getBlocAutres());
+            System.out.println(
+                    fichier.getNom()
+                            + " | Proprietaire: "
+                            + fichier.getProprietaire()
+                            + " | Droits: "
+                            + fichier.getBlocProprietaire()
+                            + "|" + fichier.getBlocAutres());
         }
+
     }
 
 }
