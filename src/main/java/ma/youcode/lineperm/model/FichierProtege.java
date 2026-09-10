@@ -1,76 +1,94 @@
 package ma.youcode.lineperm.model;
 
 public class FichierProtege {
-
     private final String nom;
     private final String proprietaire;
 
-    private boolean ownerR;
-    private boolean ownerW;
-    private boolean ownerD;
-    private boolean otherR;
-    private boolean otherW;
-    private boolean otherD;
+    private boolean propR;
+    private boolean propW;
+    private boolean propD;
+    private boolean autR;
+    private boolean autW;
+    private boolean autD;
 
-    public FichierProtege(String nom, String proprietaire,
-            boolean ownerR, boolean ownerW, boolean ownerD,
-            boolean otherR, boolean otherW, boolean otherD) {
+    public FichierProtege(String nom, String proprietaire, boolean propR, boolean propW, boolean propD, boolean autR,
+            boolean autW, boolean autD) {
         this.nom = nom;
         this.proprietaire = proprietaire;
-        this.ownerR = ownerR;
-        this.ownerW = ownerW;
-        this.ownerD = ownerD;
-        this.otherR = otherR;
-        this.otherW = otherW;
-        this.otherD = otherD;
+        this.propR = propR;
+        this.propW = propW;
+        this.propD = propD;
+        this.autR = autR;
+        this.autW = autW;
+        this.autD = autD;
     }
 
     public FichierProtege(String nom, String proprietaire) {
         this(nom, proprietaire, true, true, true, false, false, false);
     }
 
-    public boolean isOwnerR() {
-        return ownerR;
+    public String getNom() {
+        return nom;
     }
 
-    public boolean isOwnerW() {
-        return ownerW;
+    public String getProprietaire() {
+        return proprietaire;
     }
 
-    public boolean isOwnerD() {
-        return ownerD;
+    public boolean isPropR() {
+        return propR;
     }
 
-    public boolean isOtherR() {
-        return otherR;
+    public void setPropR(boolean propR) {
+        this.propR = propR;
     }
 
-    public boolean isOtherW() {
-        return otherW;
+    public boolean isPropW() {
+        return propW;
     }
 
-    public boolean isOtherD() {
-        return otherD;
+    public void setPropW(boolean propW) {
+        this.propW = propW;
     }
 
-    public void setOtherR(boolean value) {
-        this.otherR = value;
+    public boolean isPropD() {
+        return propD;
     }
 
-    public void setOtherW(boolean value) {
-        this.otherW = value;
+    public void setPropD(boolean propD) {
+        this.propD = propD;
     }
 
-    public void setOtherD(boolean value) {
-        this.otherD = value;
+    public boolean isAutR() {
+        return autR;
+    }
+
+    public void setAutR(boolean autR) {
+        this.autR = autR;
+    }
+
+    public boolean isAutW() {
+        return autW;
+    }
+
+    public void setAutW(boolean autW) {
+        this.autW = autW;
+    }
+
+    public boolean isAutD() {
+        return autD;
+    }
+
+    public void setAutD(boolean autD) {
+        this.autD = autD;
     }
 
     public String getBlocProprietaire() {
-        return (ownerR ? "r" : "-") + (ownerW ? "w" : "-") + (ownerD ? "d" : "-");
+        return (propR ? "r" : "-") + (propW ? "w" : "-") + (propD ? "d" : "-");
     }
 
     public String getBlocAutres() {
-        return (otherR ? "r" : "-") + (otherW ? "w" : "-") + (otherD ? "d" : "-");
+        return (autR ? "r" : "-") + (autW ? "w" : "-") + (autD ? "d" : "-");
     }
 
     public String getDroitsFormates() {
