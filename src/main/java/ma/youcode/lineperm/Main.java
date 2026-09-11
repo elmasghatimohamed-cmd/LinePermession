@@ -40,6 +40,26 @@ public class Main {
                             + "|" + fichier.getBlocAutres());
         }
 
+        String nomFichier = "file.txt";
+        String contenu = "Hello world";
+
+        boolean ecriture = fileService.ecrireContenu(user, nomFichier, contenu);
+
+        if (ecriture) {
+            System.out.println("Contenu ecrit avec succes");
+        } else {
+            System.out.println("Echec de l'ecriture");
+        }
+
+        String contenuLu = fileService.lireContenu(user, nomFichier);
+
+        if (contenuLu != null) {
+            System.out.println("Contenu du fichier :");
+            System.out.println(contenuLu);
+        } else {
+            System.out.println("Fichier introuvable");
+        }
+
     }
 
 }
