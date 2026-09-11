@@ -139,8 +139,11 @@ public class FileService {
         for (char c : droits.toCharArray()) {
             if (c == 'r')
                 f.setAutR(ajouter);
-            if (c == 'w')
+            if (c == 'w'){
+                f.setAutR(ajouter);
                 f.setAutW(ajouter);
+            }
+                
             if (c == 'd')
                 f.setAutD(ajouter);
         }

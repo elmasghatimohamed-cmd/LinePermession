@@ -138,6 +138,10 @@ public class ConsoleApp {
             case "chmod":
                 chmod(mots);
                 break;
+            
+            case "rm":
+                rm(mots);
+                break;
             default:
                 System.out.println("Commande inconnue. Tape 'help'.");
                 break;
@@ -157,7 +161,8 @@ public class ConsoleApp {
     private boolean requisConnexion(String commande) {
         return commande.equals("logout") || commande.equals("ls")
                 || commande.equals("touch") || commande.equals("cat")
-                || commande.equals("nano") || commande.equals("chmod");
+                || commande.equals("nano") || commande.equals("chmod")
+                || commande.equals("rm");
     }
 
     private void listerFichiers() {
@@ -214,36 +219,43 @@ public class ConsoleApp {
             return;
         }
 
+        StringBuilder sb = new StringBuilder();
+        String contenuActuel = "";
+
         if (ControleAcces.estAutorise(utilisateurConnecte, f, 'r')) {
-            String contenuActuel = fileService.lireContenu(utilisateurConnecte, nom);
+            contenuActuel = fileService.lireContenu(utilisateurConnecte, nom);
             if (contenuActuel != null && !contenuActuel.isEmpty()) {
                 System.out.print(contenuActuel);
                 if (!contenuActuel.endsWith("\n"))
                     System.out.println();
+            
+                sb.append(contenuActuel);
+                if (!contenuActuel.endsWith("\n")) {
+                    sb.append("\n");
+                }
             } else {
                 System.out.println("(fichier vide)");
             }
-        }
-
-        System.out.println("Saisis ton texte... Tape EOF pour enregistrer.");
-        StringBuilder sb = new StringBuilder();
-
-        while (true) {
-            String line = scanner.nextLine();
-            if (line.equals("EOF")) {
-                break;
-            }
-            sb.append(line).append("\n");
-        }
-
-        if (fileService.ecrireContenu(utilisateurConnecte, nom, sb.toString())) {
-            System.out.println("Fichier '" + nom + "' enregistre");
-        }
     }
+
+    System.out.println("Saisis ton texte... Tape EOF pour enregistrer.");
+
+    while (true) {
+        String line = scanner.nextLine();
+        if (line.equals("EOF")) {
+            break;
+        }
+        sb.append(line).append("\n");
+    }
+
+    if (fileService.ecrireContenu(utilisateurConnecte, nom, sb.toString())) {
+        System.out.println("Fichier '" + nom + "' enregistre");
+    }
+}
 
     private void chmod(String[] mots) {
         if (mots.length < 3) {
-            System.out.println("Usage: chmod <r|w|d|-r|-w|-d> <fichier>");
+            System.out.println("Erreur");
             return;
         }
         String argDroit = mots[1];
@@ -266,4 +278,24 @@ public class ConsoleApp {
             System.out.println(nom + ": " + avant + "\n->\n" + apres);
         }
     }
+
+    private void rm(String[] mots) {
+        if (mots.length < 2) {
+            System.out.println("Usage: rm <fichier>");
+            return;
+        }
+        String nom = mots[1];
+        FichierProtege f = fileService.getFichier(nom);
+
+        if (f == null) {
+            System.out.println("Fichier inexistant.");
+            return;
+        }
+
+        if (fileService.supprimerFichier(utilisateurConnecte, nom)) {
+            System.out.println("Fichier '" + nom + "' supprime.");
+        } else {
+            System.out.println("Permission denied.");
+        }
+}
 }
