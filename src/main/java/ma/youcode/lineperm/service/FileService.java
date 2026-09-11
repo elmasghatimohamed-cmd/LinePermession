@@ -121,4 +121,26 @@ public class FileService {
             return false;
         }
     }
+
+    public boolean modifierDroits(User user, String nom, String argDroit) {
+        FichierProtege f = fichiers.get(nom);
+        if (f == null) {
+            return false;
+        }
+
+        boolean ajouter = !argDroit.startsWith("-");
+        String droits = argDroit.replace("-", "");
+
+        for (char c : droits.toCharArray()) {
+            if (c == 'r')
+                f.setAutR(ajouter);
+            if (c == 'w')
+                f.setAutW(ajouter);
+            if (c == 'd')
+                f.setAutD(ajouter);
+        }
+
+        sauvegarderMetadonnees();
+        return true;
+    }
 }
