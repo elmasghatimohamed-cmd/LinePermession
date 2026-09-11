@@ -1,5 +1,6 @@
 package ma.youcode.lineperm.service;
 
+import ma.youcode.lineperm.access.ControleAcces;
 import ma.youcode.lineperm.model.FichierProtege;
 import ma.youcode.lineperm.model.User;
 
@@ -57,7 +58,11 @@ public class FileService {
         return fichiers.values();
     }
 
-    private void charger() {
+    public FichierProtege getFichier(String nom) {
+        return fichiers.get(nom);
+    }
+
+    public void charger() {
         fichiers.clear();
         if (!Files.exists(metaPath)) {
             return;
@@ -93,7 +98,7 @@ public class FileService {
 
     public String lireContenu(User user, String nom) {
         FichierProtege f = fichiers.get(nom);
-        if (f == null) {
+        if (f == null || !ControleAcces.estAutorise(user, f, 'r')) {
             return null;
         }
         try {
@@ -108,7 +113,7 @@ public class FileService {
 
     public boolean ecrireContenu(User user, String nom, String contenu) {
         FichierProtege f = fichiers.get(nom);
-        if (f == null) {
+        if (f == null || !ControleAcces.estAutorise(user, f, 'w')) {
             return false;
         }
         try {
@@ -120,5 +125,50 @@ public class FileService {
         } catch (IOException e) {
             return false;
         }
+    }
+
+    public boolean modifierDroits(User user, String nom, String argDroit) {
+        FichierProtege f = fichiers.get(nom);
+        if (f == null || !user.getLogin().equals(f.getProprietaire())) {
+            return false;
+        }
+
+        boolean ajouter = !argDroit.startsWith("-");
+        String droits = argDroit.replace("-", "");
+
+        for (char c : droits.toCharArray()) {
+            if (c == 'r')
+                f.setAutR(ajouter);
+            if (c == 'w'){
+                f.setAutR(ajouter);
+                f.setAutW(ajouter);
+            }
+                
+            if (c == 'd')
+                f.setAutD(ajouter);
+        }
+
+        sauvegarderMetadonnees();
+        return true;
+    }
+
+    public boolean supprimerFichier(User user, String nom) {
+        FichierProtege f = fichiers.get(nom);
+    
+        if (f == null || !ControleAcces.estAutorise(user, f, 'd')) {
+            return false;
+        }
+
+        fichiers.remove(nom);
+
+        try {
+            Path fileDataPath = dataDir.resolve(nom);
+            Files.deleteIfExists(fileDataPath);
+        } catch (IOException e) {
+            System.err.println("Erreur lors de la suppression du fichier sur disque: " + e.getMessage());
+        }
+
+        sauvegarderMetadonnees();
+        return true;
     }
 }
