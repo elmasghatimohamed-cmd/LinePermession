@@ -90,4 +90,35 @@ public class FileService {
             System.err.println("Erreur chargement fichiers: " + e.getMessage());
         }
     }
+
+    public String lireContenu(User user, String nom) {
+        FichierProtege f = fichiers.get(nom);
+        if (f == null) {
+            return null;
+        }
+        try {
+            Path fileDataPath = dataDir.resolve(nom);
+            if (!Files.exists(fileDataPath))
+                return "";
+            return Files.readString(fileDataPath);
+        } catch (IOException e) {
+            return "";
+        }
+    }
+
+    public boolean ecrireContenu(User user, String nom, String contenu) {
+        FichierProtege f = fichiers.get(nom);
+        if (f == null) {
+            return false;
+        }
+        try {
+            if (!Files.exists(dataDir)) {
+                Files.createDirectories(dataDir);
+            }
+            Files.writeString(dataDir.resolve(nom), contenu);
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
 }
