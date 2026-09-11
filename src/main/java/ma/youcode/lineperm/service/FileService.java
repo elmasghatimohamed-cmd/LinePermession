@@ -148,4 +148,24 @@ public class FileService {
         sauvegarderMetadonnees();
         return true;
     }
+
+    public boolean supprimerFichier(User user, String nom) {
+        FichierProtege f = fichiers.get(nom);
+    
+        if (f == null || !ControleAcces.estAutorise(user, f, 'd')) {
+            return false;
+        }
+
+        fichiers.remove(nom);
+
+        try {
+            Path fileDataPath = dataDir.resolve(nom);
+            Files.deleteIfExists(fileDataPath);
+        } catch (IOException e) {
+            System.err.println("Erreur lors de la suppression du fichier sur disque: " + e.getMessage());
+        }
+
+        sauvegarderMetadonnees();
+        return true;
+    }
 }
