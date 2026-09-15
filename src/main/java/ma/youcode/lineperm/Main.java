@@ -5,6 +5,7 @@ import java.util.List;
 
 import ma.youcode.lineperm.log.LogAnalyzer;
 import ma.youcode.lineperm.model.AccessLog;
+import ma.youcode.lineperm.log.LogService;
 // import ma.youcode.lineperm.ui.ConsoleApp;
 
 public class Main {
@@ -13,7 +14,7 @@ public class Main {
         // app.demarrer();
 
 
-        List<AccessLog> logs = Arrays.asList(
+        List<AccessLog> logss = Arrays.asList(
                 new AccessLog("2026-09-15", "10:00", "Mohamed", "LECTURE", "test.txt", "AUTORISE"),
                 new AccessLog("2026-09-15", "10:05", "Mohamed", "LECTURE", "test.txt", "REFUSE"),
                 new AccessLog("2026-09-15", "10:10", "Ali", "Ecriture", "test.txt", "AUTORISE"),
@@ -23,7 +24,7 @@ public class Main {
                 new AccessLog("2026-09-15", "10:30", "Ali", "LECTURE", "test.txt", "AUTORISE")
         );
 
-        LogAnalyzer analyzer = new LogAnalyzer(logs);
+        LogAnalyzer analyzer = new LogAnalyzer(logss);
 
         System.out.println("Nombre total d'actions : "+ analyzer.nbrTotaleAction());
 
@@ -41,6 +42,14 @@ public class Main {
         System.out.println("Acces refuses pour Sara : "+ analyzer.accesRefusesUtilisateur("Sara"));
         System.out.println("Utilisateur le plus actif : "+ analyzer.utilisateurPlusActif());
         System.out.println("Repartition par actions : "+ analyzer.repartitionParAction());
+
+        LogService logService = new LogService();
+
+        List<AccessLog> logs = logService.chargerLogs();
+
+        System.out.println("Nombre de logs : " + logs.size());
+
+        logs.forEach(System.out::println);
     }
 
 }
