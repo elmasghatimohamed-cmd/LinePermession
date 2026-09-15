@@ -49,4 +49,24 @@ public class LogAnalyzer {
                 .limit(3)
                 .collect(Collectors.toList());
     }
+
+    public long accesRefusesUtilisateur(String nomUtilisateur){
+
+        return logs.stream()
+            .filter(log -> log.getUtilisateur().equalsIgnoreCase(nomUtilisateur))
+            .filter(log -> "REFUSE".equalsIgnoreCase(log.getResultat()))
+            .count();
+    }
+
+    public Optional<Map.Entry<String, Long>> utilisateurPlusActif(){
+
+        return logs.stream()
+            .collect(
+                Collectors.groupingBy(
+                    AccessLog::getUtilisateur, Collectors.counting()
+                ))
+            .entrySet()
+            .stream()
+            .max(Map.Entry.comparingByValue());
+    }
 }

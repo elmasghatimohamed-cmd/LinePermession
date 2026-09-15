@@ -34,6 +34,12 @@ public class Main {
         System.out.println("Actions par utilisateur : "+ analyzer.actionParUtilisateur());
 
         System.out.println("Top 3 fichiers consultes : "+ analyzer.topFichierConsultes());
+        System.out.println("Acces refuses pour Mohamed : "+ analyzer.accesRefusesUtilisateur("Mohamed"));
+
+        System.out.println("Acces refuses pour Ali : "+ analyzer.accesRefusesUtilisateur("Ali"));
+
+        System.out.println("Acces refuses pour Sara : "+ analyzer.accesRefusesUtilisateur("Sara"));
+        System.out.println("Utilisateur le plus actif : "+ analyzer.utilisateurPlusActif());
     }
 
 }
