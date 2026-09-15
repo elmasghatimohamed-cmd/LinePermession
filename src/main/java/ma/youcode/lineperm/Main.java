@@ -16,9 +16,9 @@ public class Main {
         List<AccessLog> logs = Arrays.asList(
                 new AccessLog("2026-09-15", "10:00", "Mohamed", "LECTURE", "test.txt", "AUTORISE"),
                 new AccessLog("2026-09-15", "10:05", "Mohamed", "LECTURE", "test.txt", "REFUSE"),
-                new AccessLog("2026-09-15", "10:10", "Ali", "LECTURE", "test.txt", "AUTORISE"),
+                new AccessLog("2026-09-15", "10:10", "Ali", "Ecriture", "test.txt", "AUTORISE"),
                 new AccessLog("2026-09-15", "10:15", "Ali", "LECTURE", "data.txt", "AUTORISE"),
-                new AccessLog("2026-09-15", "10:20", "Sara", "LECTURE", "data.txt", "REFUSE"),
+                new AccessLog("2026-09-15", "10:20", "Sara", "Suppression", "data.txt", "REFUSE"),
                 new AccessLog("2026-09-15", "10:25", "Mohamed", "LECTURE", "data.txt", "AUTORISE"),
                 new AccessLog("2026-09-15", "10:30", "Ali", "LECTURE", "test.txt", "AUTORISE")
         );
@@ -40,6 +40,7 @@ public class Main {
 
         System.out.println("Acces refuses pour Sara : "+ analyzer.accesRefusesUtilisateur("Sara"));
         System.out.println("Utilisateur le plus actif : "+ analyzer.utilisateurPlusActif());
+        System.out.println("Repartition par actions : "+ analyzer.repartitionParAction());
     }
 
 }

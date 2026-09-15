@@ -69,4 +69,13 @@ public class LogAnalyzer {
             .stream()
             .max(Map.Entry.comparingByValue());
     }
+
+    public Map<String, Long> repartitionParAction(){
+
+        return logs.stream()
+            .collect(
+                Collectors.groupingBy(
+                    AccessLog::getAction, Collectors.counting()
+                ));
+    }
 }
