@@ -48,4 +48,9 @@ public class AccessLog {
     public String getResultat() { 
         return resultat; 
     }
+
+    @Override
+    public String toString() {
+        return date + " | " + heure + " | " + utilisateur + " | " + action + " | " + fichier + " | " + resultat;
+}
 }
