@@ -7,6 +7,12 @@ import ma.youcode.lineperm.model.FichierProtege;
 import ma.youcode.lineperm.model.User;
 import ma.youcode.lineperm.service.FileService;
 import ma.youcode.lineperm.service.UserService;
+import ma.youcode.lineperm.log.LogAnalyzer;
+import ma.youcode.lineperm.log.LogService;
+
+import java.util.Map;
+import java.util.Optional;
+
 
 public class ConsoleApp {
 
@@ -14,11 +20,13 @@ public class ConsoleApp {
     private Scanner scanner;
     private User utilisateurConnecte;
     private FileService fileService;
+    private LogService logService;
     private boolean actif;
 
     public ConsoleApp() {
         this.userService = new UserService();
-        this.fileService = new FileService();
+        this.logService = new LogService();
+        this.fileService = new FileService(logService);
         this.scanner = new Scanner(System.in);
         this.utilisateurConnecte = null;
         this.actif = true;
@@ -29,7 +37,7 @@ public class ConsoleApp {
         fileService.charger();
 
         System.out.println("LinPerm - gestion de fichiers & droits");
-        System.out.println("Non connecte. Commandes signup, login, exit");
+        System.out.println("Non connecte. Commandes signup, login, stats, exit");
 
         while (actif) {
             String ligne = lireLigne(prompt());
@@ -116,6 +124,8 @@ public class ConsoleApp {
             case "login":
                 login();
                 break;
+            case "stats":
+                ouvrirMenuStats();
             case "logout":
                 logout();
                 break;
@@ -297,5 +307,64 @@ public class ConsoleApp {
         } else {
             System.out.println("Permission denied.");
         }
-}
+    }
+
+    private void ouvrirMenuStats() {
+        LogAnalyzer analyzer = new LogAnalyzer(logService.chargerLogs());
+        System.out.println("Bienvenue dans LogAnalyzer. Choisissez une statistique par son numero.");
+        
+        boolean dansMenu = true;
+        while (dansMenu) {
+            System.out.println("\n=== LogAnalyzer ===");
+            System.out.println("1) Nombre total d'actions");
+            System.out.println("2) Nombre d'acces refuses");
+            System.out.println("3) Utilisateurs distincts");
+            System.out.println("4) Actions par utilisateur");
+            System.out.println("5) Top 3 des fichiers consultes");
+            System.out.println("6) Acces refuses d'un utilisateur");
+            System.out.println("7) Utilisateur le plus actif");
+            System.out.println("8) Repartition des actions par type");
+            System.out.println("0) Quitter");
+            
+            String choix = lireLigne("Choix : ").trim();
+            switch (choix) {
+                case "1":
+                    System.out.println("Nombre total d'actions : " + analyzer.nbrTotaleAction());
+                    break;
+                case "2":
+                    System.out.println("Acces refuses : " + analyzer.nombreAccesRefuses());
+                    break;
+                case "3":
+                    System.out.println("Utilisateurs distincts : " + analyzer.utilisateursDistinct());
+                    break;
+                case "4":
+                    System.out.println("Actions par utilisateur : " + analyzer.actionParUtilisateur());
+                    break;
+                case "5":
+                    System.out.println("Top 3 des fichiers consultes : " + analyzer.topFichierConsultes());
+                    break;
+                case "6":
+                    String userTarget = lireLigne("Nom de l'utilisateur : ").trim();
+                    System.out.println("Acces refuses pour " + userTarget + " : " + analyzer.accesRefusesUtilisateur(userTarget));
+                    break;
+                case "7":
+                    Optional<Map.Entry<String, Long>> plusActif = analyzer.utilisateurPlusActif();
+                    if (plusActif.isPresent()) {
+                        System.out.println("Utilisateur le plus actif : " + plusActif.get().getKey() + " (" + plusActif.get().getValue() + " actions)");
+                    } else {
+                        System.out.println("Aucun log disponible.");
+                    }
+                    break;
+                case "8":
+                    System.out.println("Repartition des actions par type : " + analyzer.repartitionParAction());
+                    break;
+                case "0":
+                    dansMenu = false;
+                    break;
+                default:
+                    System.out.println("Choix invalide. Veuillez ressayer...");
+                    break;
+            }
+        }
+    }
 }
