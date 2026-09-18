@@ -1,22 +1,21 @@
 package ma.youcode.lineperm.service;
 
-import ma.youcode.lineperm.access.ControleAcces;
-import ma.youcode.lineperm.log.LogService;
-import ma.youcode.lineperm.model.FichierProtege;
-import ma.youcode.lineperm.model.User;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import ma.youcode.lineperm.access.ControleAcces;
+import ma.youcode.lineperm.log.LogService;
+import ma.youcode.lineperm.model.FichierProtege;
+import ma.youcode.lineperm.model.User;
 
 public class FileService {
+
     private final Map<String, FichierProtege> fichiers = new LinkedHashMap<>();
     private final Path metaPath = Paths.get("resources/files.txt");
     private final Path dataDir = Paths.get("resources/data");
     private final LogService logService;
-
 
     public FileService(LogService logService) {
         this.logService = logService;
