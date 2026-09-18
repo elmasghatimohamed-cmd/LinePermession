@@ -1,22 +1,21 @@
 package ma.youcode.lineperm.service;
 
-import ma.youcode.lineperm.access.ControleAcces;
-import ma.youcode.lineperm.log.LogService;
-import ma.youcode.lineperm.model.FichierProtege;
-import ma.youcode.lineperm.model.User;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import ma.youcode.lineperm.access.ControleAcces;
+import ma.youcode.lineperm.log.LogService;
+import ma.youcode.lineperm.model.FichierProtege;
+import ma.youcode.lineperm.model.User;
 
 public class FileService {
+
     private final Map<String, FichierProtege> fichiers = new LinkedHashMap<>();
     private final Path metaPath = Paths.get("resources/files.txt");
     private final Path dataDir = Paths.get("resources/data");
     private final LogService logService;
-
 
     public FileService(LogService logService) {
         this.logService = logService;
@@ -75,8 +74,9 @@ public class FileService {
         try {
             List<String> lines = Files.readAllLines(metaPath);
             for (String line : lines) {
-                if (line.trim().isEmpty())
+                if (line.trim().isEmpty()) {
                     continue;
+                }
                 String[] parts = line.split(";");
                 if (parts.length == 4) {
                     String nom = parts[0];
@@ -111,9 +111,10 @@ public class FileService {
         }
         try {
             Path fileDataPath = dataDir.resolve(nom);
-            if (!Files.exists(fileDataPath))
+            if (!Files.exists(fileDataPath)) {
                 return "";
-            
+            }
+
             logService.enregistrer(user.getLogin(), "LECTURE", nom, "OK");
             return Files.readString(fileDataPath);
         } catch (IOException e) {
@@ -122,21 +123,25 @@ public class FileService {
     }
 
     public boolean ecrireContenu(User user, String nom, String contenu) {
-        FichierProtege f = fichiers.get(nom);
-        if (f == null || !ControleAcces.estAutorise(user, f, 'w')) {
-            if (user != null) {
-                logService.enregistrer(user.getLogin(), "ECRITURE", nom, "REFUSE");
-            }
-            return false;
-        }
         try {
+            FichierProtege f = fichiers.get(nom);
+            String login = (user != null) ? user.getLogin() : "ANONYME";
+
+            if (f == null || !ControleAcces.estAutorise(user, f, 'w')) {
+                System.out.println("DEBUG: Entering REFUSE log block for user: " + login);
+                logService.enregistrer(login, "ECRITURE", nom, "REFUSE");
+                return false;
+            }
+
             if (!Files.exists(dataDir)) {
                 Files.createDirectories(dataDir);
             }
             Files.writeString(dataDir.resolve(nom), contenu);
-            logService.enregistrer(user.getLogin(), "ECRITURE", nom, "OK");
+            logService.enregistrer(login, "ECRITURE", nom, "OK");
             return true;
-        } catch (IOException e) {
+        } catch (Exception e) {
+            System.err.println("CRASH IN ECRIRECONTENU: " + e.getClass().getName() + " - " + e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }
@@ -154,12 +159,15 @@ public class FileService {
         String droits = argDroit.replace("-", "");
 
         for (char c : droits.toCharArray()) {
-            if (c == 'r')
+            if (c == 'r') {
                 f.setAutR(ajouter);
-            if (c == 'w')
+            }
+            if (c == 'w') {
                 f.setAutW(ajouter);
-            if (c == 'd')
+            }
+            if (c == 'd') {
                 f.setAutD(ajouter);
+            }
         }
 
         sauvegarderMetadonnees();
@@ -169,7 +177,7 @@ public class FileService {
 
     public boolean supprimerFichier(User user, String nom) {
         FichierProtege f = fichiers.get(nom);
-    
+
         if (f == null || !ControleAcces.estAutorise(user, f, 'd')) {
             if (user != null) {
                 logService.enregistrer(user.getLogin(), "SUPPRESSION", nom, "REFUSE");
