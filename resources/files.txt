@@ -1,2 +1,2 @@
-fichier.txt;Mohamed;rwd;rw-
+fichier.txt;Mohamed;rwd;r--
 rapport.txt;Ali;rwd;---
