@@ -11,7 +11,7 @@ public class DatabaseInitializer {
                           "login TEXT NOT NULL UNIQUE, " +
                           "password_hash TEXT NOT NULL);";
 
-        String sqlFichiers = "CREATE TABLE IF NOT EXISTS fichiers_proteges (" +
+        String sqlFichiers = "CREATE TABLE IF NOT EXISTS fichiers (" +
                              "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                              "nom TEXT NOT NULL UNIQUE, " +
                              "proprietaire TEXT NOT NULL, " +
@@ -23,7 +23,7 @@ public class DatabaseInitializer {
                              "aut_d BOOLEAN NOT NULL DEFAULT 0, " +
                              "FOREIGN KEY (proprietaire) REFERENCES users(login) ON DELETE CASCADE);";
 
-        String sqlLogs = "CREATE TABLE IF NOT EXISTS access_logs (" +
+        String sqlLogs = "CREATE TABLE IF NOT EXISTS logs (" +
                          "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                          "date TEXT NOT NULL, " +
                          "heure TEXT NOT NULL, " +
