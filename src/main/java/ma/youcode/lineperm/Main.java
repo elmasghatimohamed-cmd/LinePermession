@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import ma.youcode.lineperm.db.DBConnection;
+import ma.youcode.lineperm.db.DatabaseInitializer;
 import ma.youcode.lineperm.ui.ConsoleApp;
 
 public class Main {
@@ -22,6 +23,7 @@ public class Main {
         } catch (SQLException e) {
             System.out.println("Erreur de connexion a SQLite : " + e.getMessage());
         }
+        DatabaseInitializer.init();
     }
 
 }
