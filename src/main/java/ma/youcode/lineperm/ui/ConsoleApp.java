@@ -3,6 +3,7 @@ package ma.youcode.lineperm.ui;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
+import java.sql.SQLException;
 import ma.youcode.lineperm.access.ControleAcces;
 import ma.youcode.lineperm.log.LogAnalyzer;
 import ma.youcode.lineperm.log.LogService;
@@ -10,6 +11,7 @@ import ma.youcode.lineperm.model.FichierProtege;
 import ma.youcode.lineperm.model.User;
 import ma.youcode.lineperm.service.FileService;
 import ma.youcode.lineperm.service.UserService;
+import ma.youcode.lineperm.dao.UserDao;
 
 public class ConsoleApp {
 
@@ -20,8 +22,9 @@ public class ConsoleApp {
     private LogService logService;
     private boolean actif;
 
-    public ConsoleApp() {
-        this.userService = new UserService();
+    public ConsoleApp() throws SQLException {
+        UserDao userDao = new UserDao();
+        this.userService = new UserService(userDao);
         this.logService = new LogService();
         this.fileService = new FileService(logService);
         this.scanner = new Scanner(System.in);
@@ -30,7 +33,6 @@ public class ConsoleApp {
     }
 
     public void demarrer() {
-        userService.charger();
         fileService.charger();
 
         System.out.println("LinPerm - gestion de fichiers & droits");
@@ -52,7 +54,6 @@ public class ConsoleApp {
 
     public void login() {
 
-        userService.charger();
         String login = lireLigne("Login ").trim();
         String mdp = lireLigne("Mot de passe: ");
 
@@ -342,12 +343,14 @@ public class ConsoleApp {
                     break;
                 case "6":
                     String userTarget = lireLigne("Nom de l'utilisateur : ").trim();
-                    System.out.println("Acces refuses pour " + userTarget + " : " + analyzer.accesRefusesUtilisateur(userTarget));
+                    System.out.println(
+                            "Acces refuses pour " + userTarget + " : " + analyzer.accesRefusesUtilisateur(userTarget));
                     break;
                 case "7":
                     Optional<Map.Entry<String, Long>> plusActif = analyzer.utilisateurPlusActif();
                     if (plusActif.isPresent()) {
-                        System.out.println("Utilisateur le plus actif : " + plusActif.get().getKey() + " (" + plusActif.get().getValue() + " actions)");
+                        System.out.println("Utilisateur le plus actif : " + plusActif.get().getKey() + " ("
+                                + plusActif.get().getValue() + " actions)");
                     } else {
                         System.out.println("Aucun log disponible.");
                     }
