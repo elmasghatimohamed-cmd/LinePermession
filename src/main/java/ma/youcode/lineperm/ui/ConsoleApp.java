@@ -1,9 +1,10 @@
 package ma.youcode.lineperm.ui;
 
+import java.sql.SQLException;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
-import java.sql.SQLException;
+
 import ma.youcode.lineperm.access.ControleAcces;
 import ma.youcode.lineperm.log.LogAnalyzer;
 import ma.youcode.lineperm.log.LogService;
@@ -15,11 +16,11 @@ import ma.youcode.lineperm.dao.UserDao;
 
 public class ConsoleApp {
 
-    private UserService userService;
-    private Scanner scanner;
+    private final UserService userService;
+    private final Scanner scanner;
     private User utilisateurConnecte;
-    private FileService fileService;
-    private LogService logService;
+    private final FileService fileService;
+    private final LogService logService;
     private boolean actif;
 
     public ConsoleApp() throws SQLException {
@@ -124,6 +125,7 @@ public class ConsoleApp {
                 break;
             case "stats":
                 ouvrirMenuStats();
+                break;
             case "logout":
                 logout();
                 break;
