@@ -13,10 +13,9 @@ public class DBConnection {
     private DBConnection() {
     }
 
-    public static synchronized Connection getConnection() throws SQLException {
+    public static Connection getConnection() throws SQLException {
         if (connection == null || connection.isClosed()) {
             try {
-                Class.forName("org.sqlite.JDBC");
                 connection = DriverManager.getConnection(URL);
 
                 try (Statement stmt = connection.createStatement()) {
