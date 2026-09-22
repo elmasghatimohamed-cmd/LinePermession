@@ -13,17 +13,13 @@ public class DBConnection {
     private DBConnection() {
     }
 
-    public static synchronized Connection getConnection() throws SQLException {
+    public static Connection getConnection() throws SQLException {
         if (connection == null || connection.isClosed()) {
-            try {
-                Class.forName("org.sqlite.JDBC");
-                connection = DriverManager.getConnection(URL);
 
-                try (Statement stmt = connection.createStatement()) {
-                    stmt.execute("PRAGMA foreign_keys = ON;");
-                }
-            } catch (ClassNotFoundException e) {
-                throw new SQLException("Driver SQLite introuvable", e);
+            connection = DriverManager.getConnection(URL);
+
+            try (Statement stmt = connection.createStatement()) {
+                stmt.execute("PRAGMA foreign_keys = ON;");
             }
         }
         return connection;
