@@ -9,6 +9,7 @@ import ma.youcode.lineperm.ui.ConsoleApp;
 
 import ma.youcode.lineperm.dao.UserDao;
 import ma.youcode.lineperm.model.User;
+import ma.youcode.lineperm.service.UserService;
 
 public class Main {
     public static void main(String[] args) throws SQLException {
@@ -16,28 +17,35 @@ public class Main {
         // app.demarrer();
 
         UserDao userDao = new UserDao();
+        UserService userService = new UserService(userDao);
 
-        User user = new User(
-                "architect_test",
-                "hash_test");
+        boolean cree = userService.creerCompte(
+                "test_user",
+                "123456");
 
-        userDao.save(user);
+        System.out.println("=== CREATION ===");
+        System.out.println("Compte cree : " + cree);
 
-        System.out.println("ID : " + user.getId());
+        System.out.println("\n=== EXISTENCE ===");
 
-        User found = userDao.findByLogin("architect_test");
+        boolean existe = userService.existe("test_user");
 
-        if (found != null) {
-            System.out.println("Login : " + found.getLogin());
-            System.out.println("Hash : " + found.getPasswordHash());
+        System.out.println("Utilisateur existe : " + existe);
+
+        System.out.println("\n=== CONNEXION CORRECTE ===");
+
+        User user = userService.connecter(
+                "test_user",
+                "123456");
+
+        if (user != null) {
+            System.out.println("Connexion reussie !");
+            System.out.println("ID : " + user.getId());
+            System.out.println("Login : " + user.getLogin());
+        } else {
+            System.out.println("Connexion refusee.");
         }
 
-        System.out.println("\n=== TOUS LES USERS ===");
-
-        for (User u : userDao.findAll()) {
-            System.out.println(
-                    u.getId() + " - " + u.getLogin());
-        }
     }
 
 }
