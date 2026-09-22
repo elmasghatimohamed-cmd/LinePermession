@@ -15,14 +15,11 @@ public class DBConnection {
 
     public static Connection getConnection() throws SQLException {
         if (connection == null || connection.isClosed()) {
-            try {
-                connection = DriverManager.getConnection(URL);
 
-                try (Statement stmt = connection.createStatement()) {
-                    stmt.execute("PRAGMA foreign_keys = ON;");
-                }
-            } catch (ClassNotFoundException e) {
-                throw new SQLException("Driver SQLite introuvable", e);
+            connection = DriverManager.getConnection(URL);
+
+            try (Statement stmt = connection.createStatement()) {
+                stmt.execute("PRAGMA foreign_keys = ON;");
             }
         }
         return connection;
