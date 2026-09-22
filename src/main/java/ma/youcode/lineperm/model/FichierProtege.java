@@ -1,18 +1,29 @@
 package ma.youcode.lineperm.model;
 
 public class FichierProtege {
+
+    private int id;
     private final String nom;
     private final String proprietaire;
 
     private boolean propR;
     private boolean propW;
     private boolean propD;
+
     private boolean autR;
     private boolean autW;
     private boolean autD;
 
-    public FichierProtege(String nom, String proprietaire, boolean propR, boolean propW, boolean propD, boolean autR,
-            boolean autW, boolean autD) {
+    public FichierProtege(
+            String nom,
+            String proprietaire,
+            boolean propR,
+            boolean propW,
+            boolean propD,
+            boolean autR,
+            boolean autW,
+            boolean autD) {
+
         this.nom = nom;
         this.proprietaire = proprietaire;
         this.propR = propR;
@@ -25,6 +36,38 @@ public class FichierProtege {
 
     public FichierProtege(String nom, String proprietaire) {
         this(nom, proprietaire, true, true, true, false, false, false);
+    }
+
+    public FichierProtege(
+            int id,
+            String nom,
+            String proprietaire,
+            boolean propR,
+            boolean propW,
+            boolean propD,
+            boolean autR,
+            boolean autW,
+            boolean autD) {
+
+        this(
+                nom,
+                proprietaire,
+                propR,
+                propW,
+                propD,
+                autR,
+                autW,
+                autD);
+
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getNom() {
