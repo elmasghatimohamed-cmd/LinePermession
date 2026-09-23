@@ -4,38 +4,36 @@ import java.sql.SQLException;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
-
-import ma.youcode.lineperm.access.ControleAcces;
+import ma.youcode.lineperm.dao.FichierDao;
+import ma.youcode.lineperm.dao.UserDao;
 import ma.youcode.lineperm.log.LogAnalyzer;
 import ma.youcode.lineperm.log.LogService;
 import ma.youcode.lineperm.model.FichierProtege;
 import ma.youcode.lineperm.model.User;
 import ma.youcode.lineperm.service.FileService;
 import ma.youcode.lineperm.service.UserService;
-import ma.youcode.lineperm.dao.UserDao;
 
 public class ConsoleApp {
 
     private final UserService userService;
-    private final Scanner scanner;
-    private User utilisateurConnecte;
     private final FileService fileService;
     private final LogService logService;
+    private final Scanner scanner;
+    private User utilisateurConnecte;
     private boolean actif;
 
     public ConsoleApp() throws SQLException {
         UserDao userDao = new UserDao();
-        this.userService = new UserService(userDao);
+        FichierDao fichierDao = new FichierDao();
         this.logService = new LogService();
-        this.fileService = new FileService(logService);
+        this.userService = new UserService(userDao);
+        this.fileService = new FileService(fichierDao, logService);
         this.scanner = new Scanner(System.in);
         this.utilisateurConnecte = null;
         this.actif = true;
     }
 
     public void demarrer() {
-        fileService.charger();
-
         System.out.println("LinPerm - gestion de fichiers & droits");
         System.out.println("Non connecte. Commandes signup, login, stats, exit");
 
@@ -133,7 +131,6 @@ public class ConsoleApp {
                 exit();
                 break;
             case "ls":
-            case "ls -l":
                 listerFichiers();
                 break;
             case "touch":
@@ -183,26 +180,30 @@ public class ConsoleApp {
 
     private void touch(String[] mots) {
         if (mots.length < 2) {
-            System.out.println("Erreur");
+            System.out.println("Usage: touch <fichier>");
             return;
         }
         String nom = mots[1];
         if (fileService.creerFichier(utilisateurConnecte, nom)) {
             System.out.println("Fichier '" + nom + "' cree.");
         } else {
-            System.out.println("Nom de fichier invalide.");
+            System.out.println("Nom de fichier invalide ou fichier deja existant.");
         }
     }
 
     private void cat(String[] mots) {
         if (mots.length < 2) {
-            System.out.println("Erreur");
+            System.out.println("Usage: cat <fichier>");
             return;
         }
         String nom = mots[1];
-        String contenu = fileService.lireContenu(utilisateurConnecte, nom);
+
+        String contenu = fileService.lireContenu(
+                utilisateurConnecte,
+                nom);
+
         if (contenu == null) {
-            System.out.println("Permission denied");
+            System.out.println("Permission denied ou fichier inexistant.");
         } else if (contenu.isEmpty()) {
             System.out.println("fichier vide");
         } else {
@@ -215,51 +216,57 @@ public class ConsoleApp {
 
     private void nano(String[] mots) {
         if (mots.length < 2) {
-            System.out.println("Erreur");
+            System.out.println("Usage: nano <fichier>");
             return;
         }
         String nom = mots[1];
-        FichierProtege f = fileService.getFichier(nom);
-        if (f == null) {
+
+        FichierProtege fichier = fileService.getFichier(nom);
+
+        if (fichier == null) {
             System.out.println("Fichier inexistant");
             return;
         }
 
-        if (!ControleAcces.estAutorise(utilisateurConnecte, f, 'w')) {
-            logService.enregistrer(utilisateurConnecte.getLogin(), "ECRITURE", nom, "REFUSE");
+        String contenuActuel = fileService.lireContenu(utilisateurConnecte, nom);
+
+        if (contenuActuel == null) {
             System.out.println("Permission denied");
             return;
         }
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder contenu = new StringBuilder();
 
-        if (ControleAcces.estAutorise(utilisateurConnecte, f, 'r')) {
-            String contenuActuel = fileService.lireContenu(utilisateurConnecte, nom);
-            if (contenuActuel != null && !contenuActuel.isEmpty()) {
-                System.out.print(contenuActuel);
-                if (!contenuActuel.endsWith("\n")) {
-                    System.out.println();
-                }
-                sb.append(contenuActuel);
-                if (!contenuActuel.endsWith("\n")) {
-                    sb.append("\n");
-                }
+        if (!contenuActuel.isEmpty()) {
+
+            System.out.print(contenuActuel);
+
+            if (!contenuActuel.endsWith("\n")) {
+                System.out.println();
+                contenu.append(contenuActuel).append("\n");
             } else {
-                System.out.println("(fichier vide)");
+                contenu.append(contenuActuel);
             }
         }
 
         System.out.println("Saisis ton texte... Tape EOF pour enregistrer.");
 
         while (true) {
-            String line = scanner.nextLine();
-            if (line.equals("EOF")) {
+
+            String ligne = scanner.nextLine();
+
+            if (ligne.equals("EOF")) {
                 break;
             }
-            sb.append(line).append("\n");
+
+            contenu.append(ligne).append("\n");
         }
 
-        if (fileService.ecrireContenu(utilisateurConnecte, nom, sb.toString())) {
+        if (fileService.ecrireContenu(
+                utilisateurConnecte,
+                nom,
+                contenu.toString())) {
+
             System.out.println("Fichier '" + nom + "' enregistre");
         } else {
             System.out.println("Permission denied");
@@ -268,22 +275,24 @@ public class ConsoleApp {
 
     private void chmod(String[] mots) {
         if (mots.length < 3) {
-            System.out.println("Erreur");
+            System.out.println("Usage: chmod <droits> <fichier>");
             return;
         }
         String argDroit = mots[1];
         String nom = mots[2];
 
-        FichierProtege f = fileService.getFichier(nom);
-        if (f == null) {
+        FichierProtege fichier = fileService.getFichier(nom);
+
+        if (fichier == null) {
             System.out.println("Fichier inexistant.");
             return;
         }
 
-        String avant = f.getDroitsFormates();
+        String avant = fichier.getDroitsFormates();
         if (fileService.modifierDroits(utilisateurConnecte, nom, argDroit)) {
-            String apres = f.getDroitsFormates();
+            String apres = fichier.getDroitsFormates();
             System.out.println(nom + ": " + avant + "\n->\n" + apres);
+
         } else {
             System.out.println("Permission denied.");
         }
@@ -295,9 +304,8 @@ public class ConsoleApp {
             return;
         }
         String nom = mots[1];
-        FichierProtege f = fileService.getFichier(nom);
 
-        if (f == null) {
+        if (fileService.getFichier(nom) == null) {
             System.out.println("Fichier inexistant.");
             return;
         }

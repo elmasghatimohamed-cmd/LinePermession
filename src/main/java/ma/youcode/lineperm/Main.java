@@ -1,7 +1,7 @@
 package ma.youcode.lineperm;
 
-import ma.youcode.lineperm.ui.ConsoleApp;
 import java.sql.SQLException;
+import ma.youcode.lineperm.ui.ConsoleApp;
 
 public class Main {
 
