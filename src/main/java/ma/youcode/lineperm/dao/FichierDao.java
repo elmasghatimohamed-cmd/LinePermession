@@ -18,9 +18,10 @@ public class FichierDao extends AbstractDao<FichierProtege> {
                 INSERT INTO fichiers (
                     nom, proprietaire,
                     prop_r, prop_w, prop_d,
-                    aut_r, aut_w, aut_d
+                    aut_r, aut_w, aut_d,
+                    contenu
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """;
 
         try (PreparedStatement pstmt = connection.prepareStatement(
@@ -36,6 +37,7 @@ public class FichierDao extends AbstractDao<FichierProtege> {
             pstmt.setBoolean(6, fichier.isAutR());
             pstmt.setBoolean(7, fichier.isAutW());
             pstmt.setBoolean(8, fichier.isAutD());
+            pstmt.setString(9, fichier.getContenu());
 
             pstmt.executeUpdate();
 
@@ -145,7 +147,7 @@ public class FichierDao extends AbstractDao<FichierProtege> {
                 || blocs[0].length() != 3
                 || blocs[1].length() != 3) {
 
-            System.err.println("Format invalide. Exemple : rwx|---");
+            System.err.println("Format invalide. Exemple : rw-|r--");
             return;
         }
 
@@ -182,6 +184,22 @@ public class FichierDao extends AbstractDao<FichierProtege> {
         }
     }
 
+    public void updateContenu(int id, String contenu) {
+
+        String sql = "UPDATE fichiers SET contenu = ? WHERE id = ?";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+
+            pstmt.setString(1, contenu);
+            pstmt.setInt(2, id);
+
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            System.err.println("Erreur updateContenu : " + e.getMessage());
+        }
+    }
+
     @Override
     public void delete(int id) {
 
@@ -210,6 +228,8 @@ public class FichierDao extends AbstractDao<FichierProtege> {
 
                 rs.getBoolean("aut_r"),
                 rs.getBoolean("aut_w"),
-                rs.getBoolean("aut_d"));
+                rs.getBoolean("aut_d"),
+
+                rs.getString("contenu"));
     }
 }

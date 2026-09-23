@@ -5,6 +5,7 @@ public class FichierProtege {
     private int id;
     private final String nom;
     private final String proprietaire;
+    private String contenu;
 
     private boolean propR;
     private boolean propW;
@@ -22,7 +23,8 @@ public class FichierProtege {
             boolean propD,
             boolean autR,
             boolean autW,
-            boolean autD) {
+            boolean autD,
+            String contenu) {
 
         this.nom = nom;
         this.proprietaire = proprietaire;
@@ -32,10 +34,11 @@ public class FichierProtege {
         this.autR = autR;
         this.autW = autW;
         this.autD = autD;
+        this.contenu = contenu;
     }
 
     public FichierProtege(String nom, String proprietaire) {
-        this(nom, proprietaire, true, true, true, false, false, false);
+        this(nom, proprietaire, true, true, true, false, false, false, "");
     }
 
     public FichierProtege(
@@ -47,17 +50,11 @@ public class FichierProtege {
             boolean propD,
             boolean autR,
             boolean autW,
-            boolean autD) {
+            boolean autD,
+            String contenu) {
 
-        this(
-                nom,
-                proprietaire,
-                propR,
-                propW,
-                propD,
-                autR,
-                autW,
-                autD);
+        this(nom, proprietaire, propR, propW, propD,
+                autR, autW, autD, contenu);
 
         this.id = id;
     }
@@ -136,5 +133,13 @@ public class FichierProtege {
 
     public String getDroitsFormates() {
         return getBlocProprietaire() + "|" + getBlocAutres();
+    }
+
+    public String getContenu() {
+        return contenu;
+    }
+
+    public void setContenu(String contenu) {
+        this.contenu = contenu;
     }
 }
