@@ -247,8 +247,6 @@ public class ConsoleApp {
             } else {
                 contenu.append(contenuActuel);
             }
-        } else {
-            System.out.println("fichier vide");
         }
 
         System.out.println("Saisis ton texte... Tape EOF pour enregistrer.");
@@ -293,7 +291,7 @@ public class ConsoleApp {
         String avant = fichier.getDroitsFormates();
         if (fileService.modifierDroits(utilisateurConnecte, nom, argDroit)) {
             String apres = fichier.getDroitsFormates();
-            System.out.println(nom + ": " + avant + "\n->\n"+ apres);
+            System.out.println(nom + ": " + avant + "\n->\n" + apres);
 
         } else {
             System.out.println("Permission denied.");
