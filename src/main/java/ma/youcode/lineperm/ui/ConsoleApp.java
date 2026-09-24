@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
 import ma.youcode.lineperm.dao.FichierDao;
+import ma.youcode.lineperm.dao.LogDao;
 import ma.youcode.lineperm.dao.UserDao;
 import ma.youcode.lineperm.log.LogAnalyzer;
 import ma.youcode.lineperm.log.LogService;
@@ -25,7 +26,8 @@ public class ConsoleApp {
     public ConsoleApp() throws SQLException {
         UserDao userDao = new UserDao();
         FichierDao fichierDao = new FichierDao();
-        this.logService = new LogService();
+        LogDao logDao = new LogDao();
+        this.logService = new LogService(logDao);
         this.userService = new UserService(userDao);
         this.fileService = new FileService(fichierDao, logService);
         this.scanner = new Scanner(System.in);
@@ -203,7 +205,7 @@ public class ConsoleApp {
                 nom);
 
         if (contenu == null) {
-            System.out.println("Permission denied ou fichier inexistant.");
+            System.out.println("Permission denied.");
         } else if (contenu.isEmpty()) {
             System.out.println("fichier vide");
         } else {
