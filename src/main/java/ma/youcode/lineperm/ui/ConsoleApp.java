@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
 import ma.youcode.lineperm.dao.FichierDao;
+import ma.youcode.lineperm.dao.LogDao;
 import ma.youcode.lineperm.dao.UserDao;
 import ma.youcode.lineperm.log.LogAnalyzer;
 import ma.youcode.lineperm.log.LogService;
@@ -25,7 +26,8 @@ public class ConsoleApp {
     public ConsoleApp() throws SQLException {
         UserDao userDao = new UserDao();
         FichierDao fichierDao = new FichierDao();
-        this.logService = new LogService();
+        LogDao logDao = new LogDao();
+        this.logService = new LogService(logDao);
         this.userService = new UserService(userDao);
         this.fileService = new FileService(fichierDao, logService);
         this.scanner = new Scanner(System.in);
@@ -115,43 +117,18 @@ public class ConsoleApp {
         }
 
         switch (commande) {
-            case "signup":
-                signup();
-                break;
-            case "login":
-                login();
-                break;
-            case "stats":
-                ouvrirMenuStats();
-                break;
-            case "logout":
-                logout();
-                break;
-            case "exit":
-                exit();
-                break;
-            case "ls":
-                listerFichiers();
-                break;
-            case "touch":
-                touch(mots);
-                break;
-            case "cat":
-                cat(mots);
-                break;
-            case "nano":
-                nano(mots);
-                break;
-            case "chmod":
-                chmod(mots);
-                break;
-
-            case "rm":
-                rm(mots);
-                break;
-            default:
-                System.out.println("Commande inconnue. Tape 'help'.");
-                break;
+            case "signup" -> signup();
+            case "login" -> login();
+            case "stats" ->ouvrirMenuStats();
+            case "logout" ->logout();
+            case "exit" -> exit();
+            case "ls" -> listerFichiers();
+            case "touch" -> touch(mots);
+            case "cat" -> cat(mots);
+            case "nano" -> nano(mots);
+            case "chmod" -> chmod(mots);
+            case "rm" -> rm(mots);
+            default -> System.out.println("Commande inconnue. Tape 'help'.");
         }
     }
 
@@ -203,7 +180,7 @@ public class ConsoleApp {
                 nom);
 
         if (contenu == null) {
-            System.out.println("Permission denied ou fichier inexistant.");
+            System.out.println("Permission denied.");
         } else if (contenu.isEmpty()) {
             System.out.println("fichier vide");
         } else {
@@ -336,44 +313,27 @@ public class ConsoleApp {
 
             String choix = lireLigne("Choix : ").trim();
             switch (choix) {
-                case "1":
-                    System.out.println("Nombre total d'actions : " + analyzer.nbrTotaleAction());
-                    break;
-                case "2":
-                    System.out.println("Acces refuses : " + analyzer.nombreAccesRefuses());
-                    break;
-                case "3":
-                    System.out.println("Utilisateurs distincts : " + analyzer.utilisateursDistinct());
-                    break;
-                case "4":
-                    System.out.println("Actions par utilisateur : " + analyzer.actionParUtilisateur());
-                    break;
-                case "5":
-                    System.out.println("Top 3 des fichiers consultes : " + analyzer.topFichierConsultes());
-                    break;
-                case "6":
+                case "1" -> System.out.println("Nombre total d'actions : " + analyzer.nbrTotaleAction());
+                case "2" -> System.out.println("Acces refuses : " + analyzer.nombreAccesRefuses());
+                case "3" -> System.out.println("Utilisateurs distincts : " + analyzer.utilisateursDistinct());
+                case "4" -> System.out.println("Actions par utilisateur : " + analyzer.actionParUtilisateur());
+                case "5" -> System.out.println("Top 3 des fichiers consultes : " + analyzer.topFichierConsultes());
+                case "6" -> {
                     String userTarget = lireLigne("Nom de l'utilisateur : ").trim();
-                    System.out.println(
-                            "Acces refuses pour " + userTarget + " : " + analyzer.accesRefusesUtilisateur(userTarget));
-                    break;
-                case "7":
+                    System.out.println("Acces refuses pour " + userTarget + " : " + analyzer.accesRefusesUtilisateur(userTarget));
+                }
+                case "7" -> {
                     Optional<Map.Entry<String, Long>> plusActif = analyzer.utilisateurPlusActif();
                     if (plusActif.isPresent()) {
                         System.out.println("Utilisateur le plus actif : " + plusActif.get().getKey() + " ("
                                 + plusActif.get().getValue() + " actions)");
                     } else {
                         System.out.println("Aucun log disponible.");
-                    }
-                    break;
-                case "8":
-                    System.out.println("Repartition des actions par type : " + analyzer.repartitionParAction());
-                    break;
-                case "0":
-                    dansMenu = false;
-                    break;
-                default:
-                    System.out.println("Choix invalide. Veuillez ressayer...");
-                    break;
+                    }   
+                }
+                case "8" -> System.out.println("Repartition des actions par type : " + analyzer.repartitionParAction());
+                case "0" -> dansMenu = false;
+                default->System.out.println("Choix invalide. Veuillez ressayer...");
             }
         }
     }

@@ -72,8 +72,6 @@ public class LogDao extends AbstractDao<AccessLog> {
     }
 
     private AccessLog mapResultSetToAccessLog(ResultSet rs) throws SQLException {
-        // Adjust getters or constructor parameters according to your AccessLog class
-        // structure
         return new AccessLog(
                 rs.getString("date"),
                 rs.getString("heure"),
