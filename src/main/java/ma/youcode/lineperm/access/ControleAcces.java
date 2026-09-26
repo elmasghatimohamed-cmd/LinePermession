@@ -13,27 +13,19 @@ public class ControleAcces {
         boolean isOwner = user.getLogin().equals(fichier.getProprietaire());
 
         if (isOwner) {
-            switch (droit) {
-                case 'r':
-                    return fichier.isPropR();
-                case 'w':
-                    return fichier.isPropW();
-                case 'd':
-                    return fichier.isPropD();
-                default:
-                    return false;
-            }
+            return switch (droit) {
+                case 'r' -> fichier.isPropR();
+                case 'w' -> fichier.isPropW();
+                case 'd' -> fichier.isPropD();
+                default -> false;
+            };
         } else {
-            switch (droit) {
-                case 'r':
-                    return fichier.isAutR();
-                case 'w':
-                    return fichier.isAutW();
-                case 'd':
-                    return fichier.isAutD();
-                default:
-                    return false;
-            }
+            return switch (droit) {
+                case 'r' -> fichier.isAutR();
+                case 'w' -> fichier.isAutW();
+                case 'd' -> fichier.isAutD();
+                default -> false;
+            };
         }
     }
 }
